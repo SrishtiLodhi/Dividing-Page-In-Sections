@@ -1,0 +1,67 @@
+import React, { useState } from 'react';
+
+const SplitEditor = () => {
+  const [content, setContent] = useState('');  // Main content state
+  const [isSplit, setIsSplit] = useState(false);  // Whether the content is split or not
+  const [splitContent, setSplitContent] = useState({ before: '', after: '' });  // Holds the split content
+
+  const handlePageBreak = () => {
+    const textarea = document.getElementById('editor'); // Access the textarea element
+    const cursorPosition = textarea.selectionStart; // Get cursor position in the textarea
+
+    // Split the content into two parts based on the cursor position
+    const beforeCursor = content.substring(0, cursorPosition);
+    const afterCursor = content.substring(cursorPosition);
+
+    // Set the split content and flag the editor as split
+    setSplitContent({ before: beforeCursor, after: afterCursor });
+    setIsSplit(true);  // Mark that the content has been split
+  };
+
+  return (
+    <div className="split-editor">
+      {!isSplit ? (
+        <div className="full-page-editor">
+          <div className="toolbar">
+            <button onClick={handlePageBreak}>Insert Page Break</button>
+          </div>
+          <textarea
+            id="editor"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Start typing and insert a page break..."
+            rows={10}
+            style={{ width: '100%', padding: '10px' }}
+          />
+        </div>
+      ) : (
+        <div className="split-container">
+          <div className="split-section">
+            <h3>Section 1</h3>
+            <textarea
+              value={splitContent.before}
+              onChange={(e) =>
+                setSplitContent({ ...splitContent, before: e.target.value })
+              }
+              rows={10}
+              style={{ width: '100%', padding: '10px' }}
+            />
+          </div>
+          <div className="split-section">
+            <h3>Section 2</h3>
+            <textarea
+              value={splitContent.after}
+              onChange={(e) =>
+                setSplitContent({ ...splitContent, after: e.target.value })
+              }
+              rows={10}
+              style={{ width: '100%', padding: '10px' }}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SplitEditor;
